@@ -30,6 +30,14 @@ Extracts the Region of Interest (ROI) for each frame, focusing on the face area,
 ```bash
 python prepare_grid_dataset.py
 ```
-
-
 Note: This script can take several hours to complete, depending on your system and dataset size.
+
+
+#### 4) Move destroyed samples
+Scrip moves samples where face was not detected to special directory. 
+
+```bash
+python move_destroyed_samples,py
+```
+
+
