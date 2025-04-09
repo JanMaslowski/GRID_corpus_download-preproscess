@@ -1,9 +1,9 @@
 import os
 import cv2
-from detect_crop_lips import crop_lips_with_margin   # Importing the previously defined function
+from detect_crop_lips_stable import crop_lips_center_fixed   # Importing the previously defined function
 import mediapipe as mp
 # Path to the main folder
-main_folder = 'gridcorpus_hd_small/video'
+main_folder = 'gridcorpus_hd/video'
 missing_faces_log = os.path.join(main_folder, 'missing_faces.txt')
 
 # Parameters for cropping
@@ -37,7 +37,7 @@ with open(missing_faces_log, 'w') as log_file:
             if os.path.isdir(folder_path):
                 
                 # Define the path for the ROI folder for storing cropped faces
-                roi_folder_name = f"ROI_{folder_name}"
+                roi_folder_name = f"stable_ROI_{folder_name}"
                 roi_folder_path = os.path.join(subfolder_path, roi_folder_name)
                 
                 # Ensure the ROI folder exists
@@ -49,14 +49,11 @@ with open(missing_faces_log, 'w') as log_file:
                         frame_path = os.path.join(folder_path, file)
                         
                         # Use the crop function to process the frame and save it in the ROI directory
-                        cropped_face = crop_lips_with_margin(
-                            frame_path, margin_x=MARGIN_X, margin_y=MARGIN_Y, offset_y=OFFSET_Y,face_mesh=face_mesh
-                        )
-                        
+                        cropped_image = crop_lips_center_fixed(frame_path, crop_width=128, crop_height=80, offset_x=0, offset_y=0, face_mesh=face_mesh)
                         # If a face was detected and cropped, save it in the ROI folder
-                        if cropped_face is not None:
+                        if cropped_image is not None:
                             cropped_filename = os.path.join(roi_folder_path, file)  # Save to ROI folder
-                            cv2.imwrite(cropped_filename, cropped_face)
+                            cv2.imwrite(cropped_filename, cropped_image)
                             print(f'Cropped face saved to {cropped_filename}')
                         else:
                             # Log the frame with no detected face
